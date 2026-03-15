@@ -1,6 +1,6 @@
 import ipaddress
 
-def validate_ipv4(address):
+def normalize_ip(address):
     ip_list = []
     address_list = address.split()
 
@@ -10,26 +10,29 @@ def validate_ipv4(address):
             ipaddress.IPv4Address(address)
             ip_list.append(address)
         except ValueError:
-            pass
-    return ip_list
+            try:
+                ipaddress.IPv6Address(address)
+                ip_list.append(address)
+            except ValueError:
+                pass
 
-def validate_ipv6(address):
-    """Check if the given string is a valid IPv6 address."""
-    try:
-        ipaddress.IPv6Address(address)
-        return address
-    except ValueError:
+    if len(ip_list)==0:
         return ""
+    elif len(ip_list)==1:
+        return ip_list[0]
+    else:
+        return ip_list
 
-# Example usage:
-print(f"'2001:db8::1' is : {validate_ipv6('2001:db8::1')}")
-print(f"'fe80::1234%1' is : {validate_ipv6('fe80::1234%1')}")
-print(f"'192.168.1.1' is : {validate_ipv6('192.168.1.1')}")
-print(f"'not an ip' is : {validate_ipv6('not an ip')}")
+if __name__ == "__main__":
+    # Example usage:
+    print(f"'2001:db8::1' is : {normalize_ip('2001:db8::1')}")
+    print(f"'fe80::1234%1' is : {normalize_ip('fe80::1234%1 fe80::1234%1 fe80::1234%1 fe80::1234%1 fe80::1234%1 fe80::1234%1')}")
+    print(f"'192.168.1.1' is : {normalize_ip('192.168.1.1')}")
+    print(f"'not an ip' is : {normalize_ip('not an ip')}")
 
 
-print(f"'2001:db8::1' is : {validate_ipv4('2001:db8::1')}")
-print(f"'fe80::1234%1' is : {validate_ipv4('fe80::1234%1')}")
-print(f"'192.168.1.1' is : {validate_ipv4('192.168.1.1')}")
-print(f"'192.168.1.1' is : {validate_ipv4('192.168.1.1 192.168.1.2 192.168.1.3 192.168.1.1 192.168.1.1 192.168.1.1 192.168.1.1')}")
-print(f"'not an ip' is : {validate_ipv4('not an ip')}")
+    print(f"'2001:db8::1' is : {normalize_ip('2001:db8::1')}")
+    print(f"'fe80::1234%1' is : {normalize_ip('fe80::1234%1')}")
+    print(f"'192.168.1.1' is : {normalize_ip('192.168.1.1')}")
+    print(f"'192.168.1.1' is : {normalize_ip('192.168.1.1 192.168.1.2 192.168.1.3 192.168.1.1 192.168.1.1 192.168.1.1 192.168.1.1')}")
+    print(f"'not an ip' is : {normalize_ip('not an ip')}")
